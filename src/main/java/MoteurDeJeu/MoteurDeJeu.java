@@ -43,4 +43,4 @@ public class MoteurDeJeu {
     public void recommencer() {
         idPuzzleActuel = jeu.getStart();
     }
-}//test emma
+}//test emma1-2
