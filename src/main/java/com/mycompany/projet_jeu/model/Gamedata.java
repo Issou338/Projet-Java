@@ -11,10 +11,15 @@ package com.mycompany.projet_jeu.model;
 import java.util.Map;
 
 public class Gamedata {
+    private String schemaVersion;
     private String title;
     private String author;
     private String start;
     private Map<String, Puzzle> puzzles;
+
+    public String getSchemaVersion() {
+        return schemaVersion;
+    }
 
     public String getTitle() {
         return title;
@@ -28,12 +33,15 @@ public class Gamedata {
         return start;
     }
 
+    public Map<String, Puzzle> getPuzzles() {
+        return puzzles;
+    }
+
     public Puzzle getPuzzle(String id) {
         return puzzles.get(id);
     }
 
     public boolean hasPuzzle(String id) {
-        return puzzles.containsKey(id);
+        return puzzles != null && puzzles.containsKey(id);
     }
-    
 }
