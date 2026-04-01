@@ -34,6 +34,10 @@ public class Puzzle {
     return choices;
    }
    
+   public Map<String, String> getRoutes() {
+        return routes;
+    }
+   
    public String getNextPuzzleId(String input) {
     if (routes == null) {
         return null;
