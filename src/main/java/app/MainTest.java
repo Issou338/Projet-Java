@@ -19,7 +19,7 @@ public class MainTest {
 
     public static void main(String[] args) throws Exception {
         
-        Gamedata game = Charger_Jeu.chargerJeu();
+        Gamedata game = Charger_Jeu.chargerJeu("scenario1");
         MoteurDeJeu moteur = new MoteurDeJeu(game);
         new FenetreJeu(moteur);
     }
