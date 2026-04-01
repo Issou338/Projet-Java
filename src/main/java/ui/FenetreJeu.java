@@ -44,16 +44,40 @@ public class FenetreJeu extends JFrame {
         zoneTexte.setText(puzzleActuel.getPrompt());
 
         panelChoix.removeAll();
-        
-        if ("texte".equals(puzzleActuel.getType())) {
+
+        if (moteur.estTermine()) {
+            JButton boutonFin = new JButton("Fin");
+            boutonFin.addActionListener(e -> System.exit(0));
+            panelChoix.add(boutonFin);
+        } else if ("boolean".equals(puzzleActuel.getType())) {
+            JButton boutonChemin1 = new JButton("La mer");
+            JButton boutonChemin2 = new JButton("La forêt");
+
+            boutonChemin1.addActionListener(e -> {
+                moteur.passerAuPuzzleSuivant("true");
+                mettreAJourAffichage();
+            });
+
+            boutonChemin2.addActionListener(e -> {
+                moteur.passerAuPuzzleSuivant("false");
+                mettreAJourAffichage();
+            });
+
+            panelChoix.add(boutonChemin1);
+            panelChoix.add(boutonChemin2);
+        } else if ("texte".equals(puzzleActuel.getType())) {
             JTextField champTexte = new JTextField(10);
             JButton boutonValider = new JButton("Valider");
-            
+
+            boutonValider.addActionListener(e -> {
+                String reponseDuJoueur = champTexte.getText();
+                moteur.passerAuPuzzleSuivant(reponseDuJoueur);
+                mettreAJourAffichage();
+            });
+
             panelChoix.add(champTexte);
             panelChoix.add(boutonValider);
-        }
-
-        if (puzzleActuel.getChoices() != null) {
+        } else if (puzzleActuel.getChoices() != null) {
             for (String choix : puzzleActuel.getChoices()) {
                 JButton bouton = new JButton(choix);
 
@@ -64,6 +88,12 @@ public class FenetreJeu extends JFrame {
 
                 panelChoix.add(bouton);
             }
+        }
+
+        if (!moteur.estTermine()) {
+            JButton boutonAbandonner = new JButton("Abandonner");
+            boutonAbandonner.addActionListener(e -> System.exit(0));
+            panelChoix.add(boutonAbandonner);
         }
 
         panelChoix.revalidate();
