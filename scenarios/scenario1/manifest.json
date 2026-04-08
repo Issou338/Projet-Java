@@ -29,7 +29,7 @@
         "p3": {
             "type": "qcm",
             "prompt": "Après avoir bien répondu à sa question, le pirate t'emmène voir son chef. Apparamment il voudrait te tester afin de te recruter dans son équipage ...",
-            "image": "suivre.png",
+            "image": "chef_brigand.png",
             "choices": ["Suivant"],
             "routes": {"Suivant": "p4"}
         },
