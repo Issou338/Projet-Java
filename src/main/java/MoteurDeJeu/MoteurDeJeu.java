@@ -26,15 +26,22 @@ public class MoteurDeJeu {
         return jeu.getPuzzle(idPuzzleActuel);
     }
 
-    public void passerAuPuzzleSuivant(String reponse) {
+     public void passerAuPuzzleSuivant(String reponse) {
         Puzzle puzzleActuel = getPuzzleActuel();
-
         String prochainId = puzzleActuel.getNextPuzzleId(reponse);
 
-        if (prochainId != null && jeu.hasPuzzle(prochainId)) {
-            idPuzzleActuel = prochainId;
+        if (prochainId == null) {
+            throw new IllegalArgumentException(
+                "Aucune route valide pour la réponse \"" + reponse + "\" dans " + idPuzzleActuel
+            );
         }
-    }
+
+        if (!jeu.hasPuzzle(prochainId)) {
+            throw new IllegalArgumentException(
+                "Route invalide : " + idPuzzleActuel + " -> " + prochainId + " (énigme inexistante)"
+            );
+        }
+     }
 
     public boolean estTermine() {
         return idPuzzleActuel.startsWith("end");
