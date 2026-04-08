@@ -100,3 +100,4 @@ public class FenetreJeu extends JFrame {
         panelChoix.repaint();
     }
 }
+//
