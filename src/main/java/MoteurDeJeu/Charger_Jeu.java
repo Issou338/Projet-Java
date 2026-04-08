@@ -37,7 +37,7 @@ public class Charger_Jeu {
                 throw new ChargementJeuException("manifest.json vide ou invalide");
             }
 
-            if (!"1.0".equals(jeu.getSchemaVersion())) {
+            if (!"1.0".equals(jeu.getSchemaVersion()) && !"1".equals(jeu.getSchemaVersion())) {
                 throw new ChargementJeuException("Valeur de schemaVersion inconnue : " + jeu.getSchemaVersion());
             }
 
@@ -49,11 +49,13 @@ public class Charger_Jeu {
                 String idPuzzle = entry.getKey();
                 Puzzle puzzle = entry.getValue();
 
-                if (!puzzle.getType().equals("qcm") && !puzzle.getType().equals("input")) {
-                    throw new ChargementJeuException("Type d’énigme non supporté : " + puzzle.getType());
+                String type = puzzle.getType();
+
+                if (!"qcm".equals(type) && !"texte".equals(type) && !"boolean".equals(type)) {
+                    throw new ChargementJeuException("Type d’énigme non supporté : " + type);
                 }
 
-                if (puzzle.getImage() != null) {
+                if (puzzle.getImage() != null && !puzzle.getImage().isEmpty()) {
                     File image = new File(dossier, "images/" + puzzle.getImage());
                     if (!image.exists()) {
                         throw new ChargementJeuException("Image introuvable : images/" + puzzle.getImage());
@@ -70,9 +72,9 @@ public class Charger_Jeu {
                             );
                         }
 
-                        if (puzzle.getType().equals("qcm")
+                        if ("qcm".equals(type)
                                 && !reponse.equals("*")
-                                && !puzzle.getChoices().contains(reponse)) {
+                                && (puzzle.getChoices() == null || !puzzle.getChoices().contains(reponse))) {
                             throw new ChargementJeuException(
                                 "Route invalide dans " + idPuzzle + " : " + reponse + " absente de choices"
                             );
@@ -92,4 +94,3 @@ public class Charger_Jeu {
         }
     }
 }
-//merge final
