@@ -14,13 +14,14 @@ import com.mycompany.projet_jeu.model.Gamedata;
 import MoteurDeJeu.Charger_Jeu;
 import MoteurDeJeu.MoteurDeJeu;
 import ui.FenetreJeu;
+import ui.FenetreAccueil;
 
 public class MainTest {
 
-    public static void main(String[] args) throws Exception {
-        
-        Gamedata game = Charger_Jeu.chargerJeu("scenario1");
-        MoteurDeJeu moteur = new MoteurDeJeu(game);
-        new FenetreJeu(moteur);
+    public static void main(String[] args) {
+        // Lance l'interface d'accueil
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            new FenetreAccueil();
+        });
     }
 }

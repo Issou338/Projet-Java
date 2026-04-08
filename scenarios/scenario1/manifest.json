@@ -1,5 +1,5 @@
 {
-    "schemaVersion": 1,
+    "schemaVersion": 1.0,
     "id": "ile_aux_pirates",
     "title": "L'aventure de l'ile aux pirates",
     "author": "Groupe 1",
@@ -8,35 +8,35 @@
          "p0": {
             "type": "qcm",
             "prompt": "Le vent se lève, les voiles claquent... et soudain, un cri déchire le silence du pont : « TERRE EN VUE ! ». À l'horizon, une île mystérieuse émerge de la brume, ses sommets escarpés semblant défier les cieux. Aucune carte ne la mentionne, aucun marin n'en est revenu pour en parler. L'instinct de pirate qui bout en toi ne trompe pas : un trésor légendaire t'attend entre ces récifs. Le destin frappe à la coque... Cap sur l'aventure, capitaine ! ",
-            "image": "images/ile_des_brigands.png",
+            "image": "ile_des_brigands.png",
             "choices": ["Suivant"],
             "routes": {"Suivant": "p1"}
         },
          "p1": {
             "type": "qcm",
             "prompt": "Une fois arrivé sur l'ile, une horde de pirates t'entoure et te crie dessus. Un pirate s'approche de toi un sabre en main pour te poser une question",
-            "image": "images/enigme1.png",
+            "image": "enigme1.png",
             "choices": ["Suivant"],
             "routes": {"Suivant": "p2"}
         },
          "p2":{
             "type": "texte",
             "prompt": "Hé matelot ! J’ai 20 pièces d’or dans mon coffre. Au marché des pirates, un canon coûte 4 pièces d’or. Dis-moi, matelot… combien de canons puis-je acheter ?",
-            "image": "images/enigme1.png",
+            "image": "enigme1.png",
             "routes": {"5" : "p3",
                        "*": "p1"}
         },
         "p3": {
             "type": "qcm",
             "prompt": "Après avoir bien répondu à sa question, le pirate t'emmène voir son chef. Apparamment il voudrait te tester afin de te recruter dans son équipage ...",
-            "image": "images/suivre.png",
+            "image": "suivre.png",
             "choices": ["Suivant"],
             "routes": {"Suivant": "p4"}
         },
         "p4": {
             "type": "qcm",
             "prompt": "Qui a découvert l’Amérique en 1492 ?",
-            "image": "images/chef_brigand.png",
+            "image": "chef_brigand.png",
             "choices": ["Vasco De Gama",
                        "Christophe Colomb",
                        "Marco Polo",
@@ -49,14 +49,14 @@
         "p5": {
             "type": "qcm",
             "prompt": "Enfin, tu as gagné la confiance du chef des pirates brigands. Pour fêter ton entrée dans sa flotte, ses gardes et lui partent chercher du rhum. À peine parti, ton regard tombe sur le coffre… rempli de pièces d’or. Ton cœur bat plus vite. Tu l’attrapes et tu t’enfuis discrètement.",
-            "image": "images/seul_piece.png",
+            "image": "seul_piece.png",
             "choices": ["Suivant"],
             "routes": {"Suivant": "p6"}
         },
         "p6": {
             "type": "boolean",
             "prompt": "Une fois arrivé dehors, deux chemins s’offrent à toi. Le chef peut revenir à tout moment… Que choisis-tu ?",
-            "image": "images/fuite.png",
+            "image": "fuite.png",
             "routes": {
                 "true": "end_win",
                 "false": "end_lose"

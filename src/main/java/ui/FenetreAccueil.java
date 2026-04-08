@@ -1,13 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package ui;
-
-/**
- *
- * @author cano28
- */
 
 import MoteurDeJeu.Charger_Jeu;
 import MoteurDeJeu.ChargementJeuException;
@@ -21,10 +12,8 @@ import java.io.File;
 public class FenetreAccueil extends JFrame {
 
     private JTextField champPseudo;
-    private JButton boutonValider;
     private JLabel labelMessage;
     private JPanel panelScenarios;
-
     private String pseudo;
 
     public FenetreAccueil() {
@@ -34,24 +23,25 @@ public class FenetreAccueil extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JPanel panelHaut = new JPanel(new GridLayout(3, 1, 5, 5));
+        JPanel panelHaut = new JPanel(new GridLayout(3, 1));
 
-        JPanel panelPseudo = new JPanel(new FlowLayout());
-        panelPseudo.add(new JLabel("Entrez votre pseudo :"));
+        JPanel panelPseudo = new JPanel();
+        panelPseudo.add(new JLabel("Pseudo :"));
         champPseudo = new JTextField(15);
         panelPseudo.add(champPseudo);
 
+        JButton boutonValider = new JButton("Valider");
+
         JPanel panelBouton = new JPanel();
-        boutonValider = new JButton("Valider");
         panelBouton.add(boutonValider);
 
-        JPanel panelBienvenue = new JPanel();
-        labelMessage = new JLabel("Veuillez entrer votre pseudo.");
-        panelBienvenue.add(labelMessage);
+        labelMessage = new JLabel("Entrez votre pseudo.");
+        JPanel panelMessage = new JPanel();
+        panelMessage.add(labelMessage);
 
         panelHaut.add(panelPseudo);
         panelHaut.add(panelBouton);
-        panelHaut.add(panelBienvenue);
+        panelHaut.add(panelMessage);
 
         add(panelHaut, BorderLayout.NORTH);
 
@@ -82,15 +72,19 @@ public class FenetreAccueil extends JFrame {
         panelScenarios.removeAll();
 
         File dossierScenarios = new File("scenarios");
+        System.out.println("Chemin absolu : " + dossierScenarios.getAbsolutePath());
+        System.out.println("Existe ? " + dossierScenarios.exists());
+        System.out.println("Est un dossier ? " + dossierScenarios.isDirectory());
+
+        File[] dossiers = dossierScenarios.listFiles(File::isDirectory);
+        System.out.println("Nombre de scénarios : " + (dossiers == null ? 0 : dossiers.length));
 
         if (!dossierScenarios.exists() || !dossierScenarios.isDirectory()) {
-            panelScenarios.add(new JLabel("Aucun dossier 'scenarios' trouvé."));
+            panelScenarios.add(new JLabel("Dossier scenarios introuvable."));
             panelScenarios.revalidate();
             panelScenarios.repaint();
             return;
         }
-
-        File[] dossiers = dossierScenarios.listFiles(File::isDirectory);
 
         if (dossiers == null || dossiers.length == 0) {
             panelScenarios.add(new JLabel("Aucun scénario disponible."));
@@ -101,12 +95,11 @@ public class FenetreAccueil extends JFrame {
 
         for (File dossier : dossiers) {
             JButton boutonScenario = new JButton(dossier.getName());
-            boutonScenario.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             boutonScenario.addActionListener(e -> lancerScenario(dossier.getPath()));
 
-            panelScenarios.add(Box.createVerticalStrut(10));
             panelScenarios.add(boutonScenario);
+            panelScenarios.add(Box.createVerticalStrut(10));
         }
 
         panelScenarios.revalidate();
@@ -114,6 +107,8 @@ public class FenetreAccueil extends JFrame {
     }
 
     private void lancerScenario(String cheminScenario) {
+        System.out.println("Scénario lancé : " + cheminScenario);
+
         try {
             Gamedata jeu = Charger_Jeu.chargerJeu(cheminScenario);
             MoteurDeJeu moteur = new MoteurDeJeu(jeu);
