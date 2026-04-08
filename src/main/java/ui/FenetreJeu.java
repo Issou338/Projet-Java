@@ -133,4 +133,4 @@ public class FenetreJeu extends JFrame {
 
         panelChoix.add(bouton);
     }
-}
+}//
