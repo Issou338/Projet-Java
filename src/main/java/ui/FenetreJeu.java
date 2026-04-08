@@ -8,96 +8,114 @@ import com.mycompany.projet_jeu.model.Puzzle;
 
 public class FenetreJeu extends JFrame {
 
-    private MoteurDeJeu moteur;
-    private JTextArea zoneTexte;
-    private JPanel panelChoix;
+    MoteurDeJeu moteur;
+    JTextArea zoneTexte = new JTextArea(6, 40);
+    JLabel labelImage = new JLabel("", SwingConstants.CENTER);
+    JPanel panelChoix = new JPanel();
 
     public FenetreJeu(MoteurDeJeu moteur) {
         this.moteur = moteur;
 
-        setTitle("Jeu Narratif");
-        setSize(700, 500);
+        setTitle("L'aventure de l'ile aux pirates");
+        setSize(850, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
 
-        zoneTexte = new JTextArea();
         zoneTexte.setEditable(false);
         zoneTexte.setLineWrap(true);
         zoneTexte.setWrapStyleWord(true);
-        zoneTexte.setFont(new Font("Serif", Font.PLAIN, 20));
+        zoneTexte.setFont(new Font("Papyrus", Font.BOLD, 22));
+        zoneTexte.setBackground(new Color(240, 228, 198));
+        zoneTexte.setForeground(new Color(60, 40, 20));
+        zoneTexte.setMargin(new Insets(20, 20, 20, 20));
 
-        panelChoix = new JPanel();
-        panelChoix.setLayout(new FlowLayout());
+        Color fondNavire = new Color(30, 15, 5);
 
-        add(new JScrollPane(zoneTexte), BorderLayout.CENTER);
+        JPanel panelCentral = new JPanel(new BorderLayout());
+        panelCentral.setBackground(fondNavire);
+
+        JScrollPane scrollPane = new JScrollPane(zoneTexte);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        panelCentral.add(scrollPane, BorderLayout.NORTH);
+        panelCentral.add(labelImage, BorderLayout.CENTER);
+
+        panelChoix.setBackground(fondNavire);
+
+        add(panelCentral, BorderLayout.CENTER);
         add(panelChoix, BorderLayout.SOUTH);
 
         mettreAJourAffichage();
-
         setVisible(true);
     }
 
     private void mettreAJourAffichage() {
-        Puzzle puzzleActuel = moteur.getPuzzleActuel();
+        Puzzle puzzle = moteur.getPuzzleActuel();
 
-        zoneTexte.setText(puzzleActuel.getPrompt());
+        zoneTexte.setText(puzzle.getPrompt());
+
+        if (puzzle.getImage() != null && !puzzle.getImage().isEmpty()) {
+            ImageIcon iconeOriginale = new ImageIcon(puzzle.getImage());
+            Image imageRedimensionnee = iconeOriginale.getImage().getScaledInstance(700, 350, Image.SCALE_SMOOTH);
+            labelImage.setIcon(new ImageIcon(imageRedimensionnee));
+        } else {
+            labelImage.setIcon(null);
+        }
 
         panelChoix.removeAll();
 
-        if (moteur.estTermine()) {
-            JButton boutonFin = new JButton("Fin");
-            boutonFin.addActionListener(e -> System.exit(0));
-            panelChoix.add(boutonFin);
-        } else if ("boolean".equals(puzzleActuel.getType())) {
-            JButton boutonChemin1 = new JButton("La mer");
-            JButton boutonChemin2 = new JButton("La forêt");
+        if ("texte".equals(puzzle.getType())) {
+            JTextField champ = new JTextField(10);
+            champ.setFont(new Font("Papyrus", Font.BOLD, 18));
+            champ.setBackground(new Color(240, 228, 198));
+            champ.setForeground(new Color(60, 40, 20));
+            champ.addActionListener(e -> envoyerReponse(champ.getText()));
+            panelChoix.add(champ);
+            creerBouton("Valider", e -> envoyerReponse(champ.getText()));
 
-            boutonChemin1.addActionListener(e -> {
-                moteur.passerAuPuzzleSuivant("true");
-                mettreAJourAffichage();
-            });
+        } else if ("boolean".equals(puzzle.getType())) {
+            creerBouton("La mer", e -> envoyerReponse("true"));
+            creerBouton("La forêt", e -> envoyerReponse("false"));
 
-            boutonChemin2.addActionListener(e -> {
-                moteur.passerAuPuzzleSuivant("false");
-                mettreAJourAffichage();
-            });
-
-            panelChoix.add(boutonChemin1);
-            panelChoix.add(boutonChemin2);
-        } else if ("texte".equals(puzzleActuel.getType())) {
-            JTextField champTexte = new JTextField(10);
-            JButton boutonValider = new JButton("Valider");
-
-            boutonValider.addActionListener(e -> {
-                String reponseDuJoueur = champTexte.getText();
-                moteur.passerAuPuzzleSuivant(reponseDuJoueur);
-                mettreAJourAffichage();
-            });
-
-            panelChoix.add(champTexte);
-            panelChoix.add(boutonValider);
-        } else if (puzzleActuel.getChoices() != null) {
-            for (String choix : puzzleActuel.getChoices()) {
-                JButton bouton = new JButton(choix);
-
-                bouton.addActionListener(e -> {
-                    moteur.passerAuPuzzleSuivant(choix);
-                    mettreAJourAffichage();
-                });
-
-                panelChoix.add(bouton);
+        } else if (puzzle.getChoices() != null) {
+            for (String choix : puzzle.getChoices()) {
+                creerBouton(choix, e -> envoyerReponse(choix));
             }
         }
 
         if (!moteur.estTermine()) {
-            JButton boutonAbandonner = new JButton("Abandonner");
-            boutonAbandonner.addActionListener(e -> System.exit(0));
-            panelChoix.add(boutonAbandonner);
+            creerBouton("Abandonner", e -> System.exit(0));
+        } else {
+            creerBouton("Recommencer", e -> {
+                moteur.recommencer();
+                mettreAJourAffichage();
+            });
+            creerBouton("Quitter le jeu", e -> System.exit(0));
         }
 
         panelChoix.revalidate();
         panelChoix.repaint();
     }
+
+    private void envoyerReponse(String reponse) {
+        moteur.passerAuPuzzleSuivant(reponse.trim());
+        mettreAJourAffichage();
+    }
+
+    private void creerBouton(String texte, java.awt.event.ActionListener action) {
+        JButton bouton = new JButton(texte);
+        bouton.addActionListener(action);
+
+        bouton.setBackground(new Color(101, 67, 33));
+        bouton.setForeground(new Color(255, 215, 0));
+        bouton.setFont(new Font("Papyrus", Font.BOLD, 18));
+        bouton.setFocusPainted(false);
+        bouton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(40, 20, 10), 3),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        bouton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        panelChoix.add(bouton);
+    }
 }
-//
