@@ -57,9 +57,10 @@
             "type": "boolean",
             "prompt": "Une fois arrivé dehors, deux chemins s’offrent à toi. Le chef peut revenir à tout moment… Que choisis-tu ?",
             "image": "fuite.png",
+            "choices": ["La forêt", "La mer"],
             "routes": {
-                "true": "end_win",
-                "false": "end_lose"
+                "false": "end_lose",
+                "true": "end_win"
             }
         },
         "end_win": {

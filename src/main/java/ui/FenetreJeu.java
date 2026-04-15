@@ -76,7 +76,9 @@ public class FenetreJeu extends JFrame {
             JButton boutonQuitter = new JButton("Quitter");
             boutonQuitter.addActionListener(e -> System.exit(0));
             panelChoix.add(boutonQuitter);
+
         } else {
+
             if ("texte".equals(puzzle.getType())) {
                 JTextField champReponse = new JTextField(15);
                 panelChoix.add(champReponse);
@@ -86,20 +88,38 @@ public class FenetreJeu extends JFrame {
                 panelChoix.add(boutonValider);
 
                 champReponse.addActionListener(e -> envoyerReponse(champReponse.getText()));
-            } else if ("boolean".equals(puzzle.getType())) {
-                JButton bouton1 = new JButton("La mer");
-                bouton1.addActionListener(e -> envoyerReponse("true"));
-                panelChoix.add(bouton1);
 
-                JButton bouton2 = new JButton("La forêt");
-                bouton2.addActionListener(e -> envoyerReponse("false"));
-                panelChoix.add(bouton2);
-            } else if (puzzle.getChoices() != null) {
-                for (String choix : puzzle.getChoices()) {
-                    JButton boutonChoix = new JButton(choix);
-                    boutonChoix.addActionListener(e -> envoyerReponse(choix));
-                    panelChoix.add(boutonChoix);
+            } else if ("boolean".equals(puzzle.getType())) {
+
+                if (puzzle.getChoices() != null && puzzle.getChoices().size() >= 2) {
+                    String texteFalse = puzzle.getChoices().get(0);
+                    String texteTrue = puzzle.getChoices().get(1);
+
+                    JButton boutonTrue = new JButton(texteTrue);
+                    boutonTrue.addActionListener(e -> envoyerReponse("true"));
+                    panelChoix.add(boutonTrue);
+
+                    JButton boutonFalse = new JButton(texteFalse);
+                    boutonFalse.addActionListener(e -> envoyerReponse("false"));
+                    panelChoix.add(boutonFalse);
+                } else {
+                    JLabel labelErreur = new JLabel("Erreur : une énigme boolean doit avoir 2 choix.");
+                    panelChoix.add(labelErreur);
                 }
+
+            } else if ("qcm".equals(puzzle.getType())) {
+
+                if (puzzle.getChoices() != null) {
+                    for (String choix : puzzle.getChoices()) {
+                        JButton boutonChoix = new JButton(choix);
+                        boutonChoix.addActionListener(e -> envoyerReponse(choix));
+                        panelChoix.add(boutonChoix);
+                    }
+                }
+
+            } else {
+                JLabel labelErreur = new JLabel("Type d'énigme non géré : " + puzzle.getType());
+                panelChoix.add(labelErreur);
             }
 
             JButton boutonAbandonner = new JButton("Abandonner");
@@ -121,11 +141,14 @@ public class FenetreJeu extends JFrame {
                 ImageIcon icone = new ImageIcon(cheminImage);
                 Image image = icone.getImage().getScaledInstance(600, 300, Image.SCALE_SMOOTH);
                 labelImage.setIcon(new ImageIcon(image));
+                labelImage.setText("");
             } else {
                 labelImage.setIcon(null);
+                labelImage.setText("Image introuvable");
             }
         } else {
             labelImage.setIcon(null);
+            labelImage.setText("");
         }
     }
 
