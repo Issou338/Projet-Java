@@ -41,10 +41,10 @@
                        "Christophe Colomb",
                        "Marco Polo",
                        "Ferdinand Magellan"],
-            "routes": {"Vasco De Gama" : "p1",
+            "routes": {"Vasco De Gama" : "p3",
                        "Christophe Colomb": "p5",
-                       "Marco Polo":"p1",
-                       "Ferdinand Magellan":"p1"}
+                       "Marco Polo":"p3",
+                       "Ferdinand Magellan":"p3"}
         }, 
         "p5": {
             "type": "qcm",
@@ -65,12 +65,14 @@
         "end_win": {
             "type": "qcm",
             "prompt": "Bravo ! Tu as atteint ton navire avec le trésor. Tu es le roi des pirates !",
+            "image":"roi.png",
             "choices": [],
             "routes": {}
         },
         "end_lose": {
            "type": "qcm",
            "prompt": "Le chef t'a rattrapé... Tu finiras tes jours à éplucher des patates en fond de cale.",
+            "image":"patate.png",
            "choices": ["Recommencer"],
            "routes": {"Recommencer": "p0"}
         }
