@@ -41,6 +41,7 @@ public class MoteurDeJeu {
                 "Route invalide : " + idPuzzleActuel + " -> " + prochainId + " (énigme inexistante)"
             );
         }
+         idPuzzleActuel = prochainId;
      }
 
     public boolean estTermine() {

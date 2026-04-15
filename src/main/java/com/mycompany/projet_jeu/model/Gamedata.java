@@ -38,6 +38,9 @@ public class Gamedata {
     }
 
     public Puzzle getPuzzle(String id) {
+        if (puzzles == null) {
+           return null;
+        }
         return puzzles.get(id);
     }
 

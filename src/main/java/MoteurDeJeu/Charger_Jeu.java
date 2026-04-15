@@ -49,10 +49,18 @@ public class Charger_Jeu {
                 String idPuzzle = entry.getKey();
                 Puzzle puzzle = entry.getValue();
 
-                String type = puzzle.getType();
+            if (puzzle == null) {
+               throw new ChargementJeuException("Puzzle nul détecté : " + idPuzzle);
+            }
 
-                if (!"qcm".equals(type) && !"texte".equals(type) && !"boolean".equals(type)) {
-                    throw new ChargementJeuException("Type d’énigme non supporté : " + type);
+            String type = puzzle.getType();
+            if (type == null) {
+               throw new ChargementJeuException("Type manquant pour l’énigme : " + idPuzzle);
+            }       
+                
+                
+                if (jeu.getPuzzles() == null || jeu.getPuzzles().isEmpty()) {
+                    throw new ChargementJeuException("Aucune énigme définie dans manifest.json");
                 }
 
                 if (puzzle.getImage() != null && !puzzle.getImage().isEmpty()) {
@@ -90,7 +98,7 @@ public class Charger_Jeu {
         } catch (ChargementJeuException e) {
             throw e;
         } catch (Exception e) {
-            throw new ChargementJeuException("Erreur lors du chargement du scénario");
+            throw new ChargementJeuException("Erreur lors du chargement du scénario : " + e.getMessage());
         }
     }
 }
