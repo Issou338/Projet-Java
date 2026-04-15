@@ -23,25 +23,26 @@ public class FenetreAccueil extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JPanel panelHaut = new JPanel(new GridLayout(3, 1));
+        JPanel panelHaut = new JPanel();
+        panelHaut.setLayout(new GridLayout(3, 1));
 
         JPanel panelPseudo = new JPanel();
-        panelPseudo.add(new JLabel("Pseudo :"));
+        JLabel labelPseudo = new JLabel("Pseudo :");
         champPseudo = new JTextField(15);
+        panelPseudo.add(labelPseudo);
         panelPseudo.add(champPseudo);
 
-        JButton boutonValider = new JButton("Valider");
-
         JPanel panelBouton = new JPanel();
+        JButton boutonValider = new JButton("Valider");
         panelBouton.add(boutonValider);
 
+        JPanel panelInfo = new JPanel();
         labelMessage = new JLabel("Entrez votre pseudo.");
-        JPanel panelMessage = new JPanel();
-        panelMessage.add(labelMessage);
+        panelInfo.add(labelMessage);
 
         panelHaut.add(panelPseudo);
         panelHaut.add(panelBouton);
-        panelHaut.add(panelMessage);
+        panelHaut.add(panelInfo);
 
         add(panelHaut, BorderLayout.NORTH);
 
@@ -64,7 +65,7 @@ public class FenetreAccueil extends JFrame {
             return;
         }
 
-        labelMessage.setText("Bienvenue " + pseudo + ", veuillez choisir votre jeu :");
+        labelMessage.setText("Bienvenue " + pseudo + " ! Choisissez un scénario :");
         afficherScenarios();
     }
 
@@ -72,19 +73,15 @@ public class FenetreAccueil extends JFrame {
         panelScenarios.removeAll();
 
         File dossierScenarios = new File("scenarios");
-        System.out.println("Chemin absolu : " + dossierScenarios.getAbsolutePath());
-        System.out.println("Existe ? " + dossierScenarios.exists());
-        System.out.println("Est un dossier ? " + dossierScenarios.isDirectory());
-
-        File[] dossiers = dossierScenarios.listFiles(File::isDirectory);
-        System.out.println("Nombre de scénarios : " + (dossiers == null ? 0 : dossiers.length));
 
         if (!dossierScenarios.exists() || !dossierScenarios.isDirectory()) {
-            panelScenarios.add(new JLabel("Dossier scenarios introuvable."));
+            panelScenarios.add(new JLabel("Dossier 'scenarios' introuvable."));
             panelScenarios.revalidate();
             panelScenarios.repaint();
             return;
         }
+
+        File[] dossiers = dossierScenarios.listFiles(File::isDirectory);
 
         if (dossiers == null || dossiers.length == 0) {
             panelScenarios.add(new JLabel("Aucun scénario disponible."));
@@ -96,7 +93,7 @@ public class FenetreAccueil extends JFrame {
         for (File dossier : dossiers) {
             JButton boutonScenario = new JButton(dossier.getName());
 
-            boutonScenario.addActionListener(e -> lancerScenario(dossier.getPath()));
+            boutonScenario.addActionListener(e -> lancerScenario(dossier.getAbsolutePath()));
 
             panelScenarios.add(boutonScenario);
             panelScenarios.add(Box.createVerticalStrut(10));
@@ -107,17 +104,15 @@ public class FenetreAccueil extends JFrame {
     }
 
     private void lancerScenario(String cheminScenario) {
-        System.out.println("Scénario lancé : " + cheminScenario);
-
         try {
             Gamedata jeu = Charger_Jeu.chargerJeu(cheminScenario);
             MoteurDeJeu moteur = new MoteurDeJeu(jeu);
 
-            new FenetreJeu(moteur);
+            new FenetreJeu(moteur, cheminScenario);
             dispose();
 
         } catch (ChargementJeuException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
