@@ -77,10 +77,15 @@ public class Charger_Jeu {
                 }
 
                 if (puzzle.getImage() != null && !puzzle.getImage().isBlank()) {
-                    File image = new File(dossier, "images" + File.separator + puzzle.getImage());
+
+                    File image = new File(dossier, puzzle.getImage());
+
                     if (!image.exists()) {
-                        throw new ChargementJeuException("Image introuvable : images/" + puzzle.getImage());
+
+                        throw new ChargementJeuException("Image introuvable : " + puzzle.getImage());
+
                     }
+
                 }
 
                 if (puzzle.getRoutes() == null || puzzle.getRoutes().isEmpty()) {

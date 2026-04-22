@@ -41,8 +41,7 @@ public class FenetreJeu extends JFrame {
         panelCentre.add(scrollTexte, BorderLayout.NORTH);
         panelCentre.add(labelImage, BorderLayout.CENTER);
 
-        panelChoix = new JPanel();
-        panelChoix.setLayout(new FlowLayout());
+        panelChoix = new JPanel(new FlowLayout());
 
         add(panelCentre, BorderLayout.CENTER);
         add(panelChoix, BorderLayout.SOUTH);
@@ -53,105 +52,63 @@ public class FenetreJeu extends JFrame {
     }
 
     private void mettreAJourAffichage() {
+        panelChoix.removeAll();
 
-       panelChoix.removeAll();
+        if (moteur.estTermine()) {
+            afficherEcranFin();
+            return;
+        }
 
-          if (moteur.estTermine()) {
+        Puzzle puzzle = moteur.getPuzzleActuel();
 
-              afficherEcranFin();
+        if (puzzle == null) {
+            JOptionPane.showMessageDialog(this, "Erreur : puzzle actuel introuvable.");
+            return;
+        }
 
-              return;
-
-            }
-
-         Puzzle puzzle = moteur.getPuzzleActuel();
-
-         if (puzzle == null) {
-
-              JOptionPane.showMessageDialog(this, "Erreur : puzzle actuel introuvable.");
-
-              return;
-
-         }
-
-         zoneTexte.setText(puzzle.getPrompt());
-
-         afficherImage(puzzle);
+        zoneTexte.setText(puzzle.getPrompt());
+        afficherImage(puzzle);
 
         if ("text".equals(puzzle.getType())) {
+            JTextField champReponse = new JTextField(15);
+            panelChoix.add(champReponse);
 
-               JTextField champReponse = new JTextField(15);
+            JButton boutonValider = new JButton("Valider");
+            boutonValider.addActionListener(e -> envoyerReponse(champReponse.getText()));
+            panelChoix.add(boutonValider);
 
-               panelChoix.add(champReponse);
+            champReponse.addActionListener(e -> envoyerReponse(champReponse.getText()));
 
-              JButton boutonValider = new JButton("Valider");
+        } else if ("boolean".equals(puzzle.getType())) {
+            JButton boutonVrai = new JButton("Vrai");
+            boutonVrai.addActionListener(e -> envoyerReponse("true"));
+            panelChoix.add(boutonVrai);
 
-              boutonValider.addActionListener(e -> envoyerReponse(champReponse.getText()));
+            JButton boutonFaux = new JButton("Faux");
+            boutonFaux.addActionListener(e -> envoyerReponse("false"));
+            panelChoix.add(boutonFaux);
 
-              panelChoix.add(boutonValider);
-
-              champReponse.addActionListener(e -> envoyerReponse(champReponse.getText()));
-
-           } else if ("boolean".equals(puzzle.getType())) {
-
-                 if (puzzle.getChoices() != null && puzzle.getChoices().size() >= 2) {
-
-                    String texteFalse = puzzle.getChoices().get(0);
-
-              String texteTrue = puzzle.getChoices().get(1);
-
-            JButton boutonFalse = new JButton(texteFalse);
-
-            boutonFalse.addActionListener(e -> envoyerReponse("false"));
-
-            panelChoix.add(boutonFalse);
-
-            JButton boutonTrue = new JButton(texteTrue);
-
-            boutonTrue.addActionListener(e -> envoyerReponse("true"));
-
-            panelChoix.add(boutonTrue);
-
-        } else {
-
-            panelChoix.add(new JLabel("Erreur : une énigme boolean doit avoir 2 choix."));
-
-        }
-
-    } else if ("qcm".equals(puzzle.getType())) {
-
-        if (puzzle.getChoices() != null) {
-
-            for (String choix : puzzle.getChoices()) {
-
-                JButton boutonChoix = new JButton(choix);
-
-                boutonChoix.addActionListener(e -> envoyerReponse(choix));
-
-                panelChoix.add(boutonChoix);
-
+        } else if ("qcm".equals(puzzle.getType())) {
+            if (puzzle.getChoices() != null) {
+                for (String choix : puzzle.getChoices()) {
+                    JButton boutonChoix = new JButton(choix);
+                    boutonChoix.addActionListener(e -> envoyerReponse(choix));
+                    panelChoix.add(boutonChoix);
+                }
             }
-
         }
 
+        JButton boutonAbandonner = new JButton("Abandonner");
+        boutonAbandonner.addActionListener(e -> abandonnerPartie());
+        panelChoix.add(boutonAbandonner);
+
+        panelChoix.revalidate();
+        panelChoix.repaint();
     }
-
-    JButton boutonAbandonner = new JButton("Abandonner");
-
-    boutonAbandonner.addActionListener(e -> abandonnerPartie());
-
-    panelChoix.add(boutonAbandonner);
-
-    panelChoix.revalidate();
-
-    panelChoix.repaint();
-
-}
 
     private void afficherImage(Puzzle puzzle) {
         if (puzzle.getImage() != null && !puzzle.getImage().isEmpty()) {
-           String cheminImage = cheminScenario + File.separator + puzzle.getImage();
-
+            String cheminImage = cheminScenario + File.separator + puzzle.getImage();
             File fichierImage = new File(cheminImage);
 
             if (fichierImage.exists()) {
@@ -161,7 +118,7 @@ public class FenetreJeu extends JFrame {
                 labelImage.setText("");
             } else {
                 labelImage.setIcon(null);
-                labelImage.setText("Image introuvable");
+                labelImage.setText("Image introuvable : " + puzzle.getImage());
             }
         } else {
             labelImage.setIcon(null);
@@ -177,53 +134,55 @@ public class FenetreJeu extends JFrame {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     private void afficherEcranFin() {
-    labelImage.setIcon(null);
+        labelImage.setIcon(null);
+        labelImage.setText("");
 
-    String resultat;
-    if (moteur.estVictoire()) {
-        resultat = "Victoire !";
-    } else if (moteur.estDefaite()) {
-        resultat = "Défaite.";
-    } else if (moteur.estAbandonne()) {
-        resultat = "Partie abandonnée.";
-    } else {
-        resultat = "Fin de partie.";
+        String resultat;
+        if (moteur.estVictoire()) {
+            resultat = "Victoire !";
+        } else if (moteur.estDefaite()) {
+            resultat = "Défaite.";
+        } else if (moteur.estAbandonne()) {
+            resultat = "Partie abandonnée.";
+        } else {
+            resultat = "Fin de partie.";
+        }
+
+        zoneTexte.setText(
+            resultat + "\n\n" +
+            "Résumé :\n" +
+            "- Énigmes résolues : " + moteur.getNbEnigmesResolues()
+        );
+
+        JButton boutonRecommencer = new JButton("Recommencer");
+        boutonRecommencer.addActionListener(e -> {
+            moteur.recommencer();
+            mettreAJourAffichage();
+        });
+
+        JButton boutonQuitter = new JButton("Quitter");
+        boutonQuitter.addActionListener(e -> dispose());
+
+        panelChoix.add(boutonRecommencer);
+        panelChoix.add(boutonQuitter);
+
+        panelChoix.revalidate();
+        panelChoix.repaint();
     }
 
-    zoneTexte.setText(
-        resultat + "\n\n" +
-        "Résumé :\n" +
-        "- Énigmes résolues : " + moteur.getNbEnigmesResolues()
-    );
+    private void abandonnerPartie() {
+        int choix = JOptionPane.showConfirmDialog(
+            this,
+            "Voulez-vous vraiment abandonner la partie ?",
+            "Abandon",
+            JOptionPane.YES_NO_OPTION
+        );
 
-    JButton boutonRecommencer = new JButton("Recommencer");
-    boutonRecommencer.addActionListener(e -> {
-        moteur.recommencer();
-        mettreAJourAffichage();
-    });
-
-    JButton boutonQuitter = new JButton("Quitter");
-    boutonQuitter.addActionListener(e -> dispose());
-
-    panelChoix.add(boutonRecommencer);
-    panelChoix.add(boutonQuitter);
-
-    panelChoix.revalidate();
-    panelChoix.repaint();
-}
-
-private void abandonnerPartie() {
-    int choix = JOptionPane.showConfirmDialog(
-        this,
-        "Voulez-vous vraiment abandonner la partie ?",
-        "Abandon",
-        JOptionPane.YES_NO_OPTION
-    );
-
-    if (choix == JOptionPane.YES_OPTION) {
-        moteur.abandonner();
-        mettreAJourAffichage();
+        if (choix == JOptionPane.YES_OPTION) {
+            moteur.abandonner();
+            mettreAJourAffichage();
+        }
     }
-}
 }

@@ -55,9 +55,8 @@
         },
         "p6": {
             "type": "boolean",
-            "prompt": "Une fois arrivé dehors, deux chemins s’offrent à toi. Le chef peut revenir à tout moment… Que choisis-tu ?",
+            "prompt": "Fuir par la mer te permettra-t-il d'échapper au chef des pirates ?",
             "image": "images/fuite.png",
-            "choices": ["La forêt", "La mer"],
             "routes": {
                 "false": "p7_lose",
                 "true": "p7_win"
