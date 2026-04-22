@@ -31,7 +31,7 @@ public class MoteurDeJeuTest {
             "p1":{
               "type":"text",
               "prompt":"Code ?",
-              "image":"img.png",
+              "image":"images/img.png",
               "routes":{"123":"end_win","*":"end_lose"}
             }
           }
@@ -61,7 +61,7 @@ public class MoteurDeJeuTest {
             "p1":{
               "type":"text",
               "prompt":"Code ?",
-              "image":"img.png",
+              "image":"images/img.png",
               "routes":{"123":"end_win","*":"end_lose"}
             }
           }
@@ -91,7 +91,7 @@ public class MoteurDeJeuTest {
             "p1":{
               "type":"text",
               "prompt":"Code ?",
-              "image":"img.png",
+              "image":"images/img.png",
               "routes":{"123":"end_win","*":"end_lose"}
             }
           }
@@ -120,7 +120,7 @@ public class MoteurDeJeuTest {
             "p1":{
               "type":"text",
               "prompt":"Code ?",
-              "image":"img.png",
+              "image":"images/img.png",
               "routes":{"123":"end_win"}
             }
           }

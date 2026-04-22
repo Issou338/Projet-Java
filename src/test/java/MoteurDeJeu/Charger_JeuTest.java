@@ -61,7 +61,7 @@ public class Charger_JeuTest {
             "p1":{
               "type":"text",
               "prompt":"Code ?",
-              "image":"img.png",
+              "image":"images/img.png",
               "routes":{"123":"end_win","*":"end_lose"}
             }
           }
@@ -95,7 +95,7 @@ public class Charger_JeuTest {
             "p1":{
               "type":"text",
               "prompt":"Code ?",
-              "image":"img.png",
+              "image":"images/img.png",
               "routes":{"123":"p99","*":"end_lose"}
             }
           }
@@ -129,7 +129,7 @@ public class Charger_JeuTest {
             "p1":{
               "type":"slide",
               "prompt":"Code ?",
-              "image":"img.png",
+              "image":"images/img.png",
               "routes":{"123":"end_win","*":"end_lose"}
             }
           }
@@ -163,7 +163,7 @@ public class Charger_JeuTest {
             "p1":{
               "type":"text",
               "prompt":"Code ?",
-              "image":"img.png",
+              "image":"images/img.png",
               "routes":{"123":"end_win","*":"end_lose"}
             }
           }
