@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package app;
+package Lancement;
 
 /**
  *
@@ -16,7 +16,7 @@ import MoteurDeJeu.MoteurDeJeu;
 import ui.FenetreJeu;
 import ui.FenetreAccueil;
 
-public class MainTest {
+public class MainLancer {
 
     public static void main(String[] args) {
         // Lance l'interface d'accueil

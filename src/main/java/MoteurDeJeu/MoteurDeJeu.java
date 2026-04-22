@@ -15,18 +15,28 @@ public class MoteurDeJeu {
 
     private Gamedata jeu;
     private String idPuzzleActuel;
+    private int nbEnigmesResolues;
+    private boolean abandonne;
 
     public MoteurDeJeu(Gamedata jeu) {
         this.jeu = jeu;
         this.idPuzzleActuel = jeu.getStart();
+        this.nbEnigmesResolues = 0;
+        this.abandonne = false;
     }
 
-    
     public Puzzle getPuzzleActuel() {
+        if (estTermine()) {
+            return null;
+        }
         return jeu.getPuzzle(idPuzzleActuel);
     }
 
-     public void passerAuPuzzleSuivant(String reponse) {
+    public void passerAuPuzzleSuivant(String reponse) {
+        if (estTermine()) {
+            throw new IllegalStateException("La partie est déjà terminée.");
+        }
+
         Puzzle puzzleActuel = getPuzzleActuel();
         String prochainId = puzzleActuel.getNextPuzzleId(reponse);
 
@@ -36,19 +46,44 @@ public class MoteurDeJeu {
             );
         }
 
-        if (!jeu.hasPuzzle(prochainId)) {
+        boolean estFin = prochainId.startsWith("end_");
+        if (!estFin && !jeu.hasPuzzle(prochainId)) {
             throw new IllegalArgumentException(
                 "Route invalide : " + idPuzzleActuel + " -> " + prochainId + " (énigme inexistante)"
             );
         }
-         idPuzzleActuel = prochainId;
-     }
+
+        nbEnigmesResolues++;
+        idPuzzleActuel = prochainId;
+    }
 
     public boolean estTermine() {
-        return idPuzzleActuel.startsWith("end");
+        return abandonne || (idPuzzleActuel != null && idPuzzleActuel.startsWith("end_"));
+    }
+
+    public boolean estVictoire() {
+        return "end_win".equals(idPuzzleActuel);
+    }
+
+    public boolean estDefaite() {
+        return "end_lose".equals(idPuzzleActuel);
+    }
+
+    public boolean estAbandonne() {
+        return abandonne;
+    }
+
+    public void abandonner() {
+        abandonne = true;
+    }
+
+    public int getNbEnigmesResolues() {
+        return nbEnigmesResolues;
     }
 
     public void recommencer() {
         idPuzzleActuel = jeu.getStart();
+        nbEnigmesResolues = 0;
+        abandonne = false;
     }
 }

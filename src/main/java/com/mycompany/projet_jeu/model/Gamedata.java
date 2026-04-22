@@ -12,6 +12,7 @@ import java.util.Map;
 
 public class Gamedata {
     private String schemaVersion;
+    private String id;
     private String title;
     private String author;
     private String start;
@@ -19,6 +20,10 @@ public class Gamedata {
 
     public String getSchemaVersion() {
         return schemaVersion;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -39,7 +44,7 @@ public class Gamedata {
 
     public Puzzle getPuzzle(String id) {
         if (puzzles == null) {
-           return null;
+            return null;
         }
         return puzzles.get(id);
     }

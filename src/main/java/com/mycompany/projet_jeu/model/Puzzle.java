@@ -39,18 +39,15 @@ public class Puzzle {
     }
    
    public String getNextPuzzleId(String input) {
-        if (routes == null) {
-            return null;
-        }
-
-        if (input != null && routes.containsKey(input)) {
-            return routes.get(input);
-        }
-
-        if (routes.containsKey("*")) {
-            return routes.get("*");
-        }
-
+    if (routes == null || routes.isEmpty()) {
         return null;
     }
+
+    if (input != null && routes.containsKey(input)) {
+        return routes.get(input);
+    }
+
+    return routes.get("*");
+    }
+
 }

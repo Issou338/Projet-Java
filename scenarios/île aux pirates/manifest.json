@@ -20,7 +20,7 @@
             "routes": {"Suivant": "p2"}
         },
          "p2":{
-            "type": "texte",
+            "type": "text",
             "prompt": "Hé matelot ! J’ai 20 pièces d’or dans mon coffre. Au marché des pirates, un canon coûte 4 pièces d’or. Dis-moi, matelot… combien de canons puis-je acheter ?",
             "image": "enigme1.png",
             "routes": {"5" : "p3",

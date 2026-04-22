@@ -8,9 +8,13 @@ package MoteurDeJeu;
  *
  * @author cano28
  */
-
+ // Exception lancée quand un scénario est invalide ou impossible à charger.
 public class ChargementJeuException extends Exception {
+
     public ChargementJeuException(String message) {
+
         super(message);
+
     }
+
 }
