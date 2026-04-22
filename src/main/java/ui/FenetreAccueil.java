@@ -7,8 +7,12 @@ import com.mycompany.projet_jeu.model.Gamedata;
 import com.mycompany.projet_jeu.model.Puzzle;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class FenetreAccueil extends JFrame {
 
@@ -68,7 +72,9 @@ public class FenetreAccueil extends JFrame {
 
         JPanel panelBouton = new JPanel();
         JButton boutonValider = new JButton("Valider");
+        JButton boutonImporterZip = new JButton("Importer un scénario .zip");
         panelBouton.add(boutonValider);
+        panelBouton.add(boutonImporterZip);
 
         JPanel panelInfo = new JPanel();
         labelMessage = new JLabel("Entrez votre pseudo.");
@@ -87,6 +93,7 @@ public class FenetreAccueil extends JFrame {
         panelAccueil.add(scrollPane, BorderLayout.CENTER);
 
         boutonValider.addActionListener(e -> validerPseudo());
+        boutonImporterZip.addActionListener(e -> importerScenarioZip());
     }
 
     private void creerInterfaceJeu() {
@@ -137,18 +144,19 @@ public class FenetreAccueil extends JFrame {
             return;
         }
 
-        File[] dossiers = dossierScenarios.listFiles(File::isDirectory);
+        File[] fichiers = dossierScenarios.listFiles(file ->
+                file.isDirectory() || file.getName().toLowerCase().endsWith(".zip"));
 
-        if (dossiers == null || dossiers.length == 0) {
+        if (fichiers == null || fichiers.length == 0) {
             panelScenarios.add(new JLabel("Aucun scénario disponible."));
             panelScenarios.revalidate();
             panelScenarios.repaint();
             return;
         }
 
-        for (File dossier : dossiers) {
-            JButton boutonScenario = new JButton(dossier.getName());
-            boutonScenario.addActionListener(e -> lancerScenario(dossier.getAbsolutePath()));
+        for (File fichier : fichiers) {
+            JButton boutonScenario = new JButton(fichier.getName());
+            boutonScenario.addActionListener(e -> lancerScenario(fichier.getAbsolutePath()));
 
             panelScenarios.add(boutonScenario);
             panelScenarios.add(Box.createVerticalStrut(10));
@@ -158,16 +166,69 @@ public class FenetreAccueil extends JFrame {
         panelScenarios.repaint();
     }
 
-    private void lancerScenario(String cheminScenario) {
+    private void importerScenarioZip() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Sélectionner un scénario .zip");
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Fichiers ZIP", "zip"));
+
+        int resultat = fileChooser.showOpenDialog(this);
+
+        if (resultat != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        File fichierSelectionne = fileChooser.getSelectedFile();
+
+        if (fichierSelectionne == null || !fichierSelectionne.getName().toLowerCase().endsWith(".zip")) {
+            JOptionPane.showMessageDialog(this, "Veuillez sélectionner un fichier .zip valide.");
+            return;
+        }
+
         try {
-            Gamedata jeu = Charger_Jeu.chargerJeu(cheminScenario);
+            File dossierScenarios = new File("scenarios");
+
+            if (!dossierScenarios.exists()) {
+                dossierScenarios.mkdirs();
+            }
+
+            Path source = fichierSelectionne.toPath();
+            Path destination = new File(dossierScenarios, fichierSelectionne.getName()).toPath();
+
+            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+
+            JOptionPane.showMessageDialog(this, "Scénario importé avec succès : " + fichierSelectionne.getName());
+
+            if (pseudo != null && !pseudo.isBlank()) {
+                afficherScenarios();
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Erreur lors de l'import du scénario : " + e.getMessage(),
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void lancerScenario(String cheminScenarioSelectionne) {
+        try {
+            String dossierScenarioACharger = cheminScenarioSelectionne;
+
+            if (cheminScenarioSelectionne.toLowerCase().endsWith(".zip")) {
+                dossierScenarioACharger = ZipUtils.extraireScenarioZip(cheminScenarioSelectionne);
+            }
+
+            Gamedata jeu = Charger_Jeu.chargerJeu(dossierScenarioACharger);
             moteur = new MoteurDeJeu(jeu);
-            this.cheminScenario = cheminScenario;
+            this.cheminScenario = dossierScenarioACharger;
 
             mettreAJourAffichageJeu();
             cardLayout.show(panelPrincipal, "JEU");
 
         } catch (ChargementJeuException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -276,10 +337,10 @@ public class FenetreAccueil extends JFrame {
         }
 
         zoneTexte.setText(
-            resultat + "\n\n" +
-            "Résumé :\n" +
-            "- Joueur : " + pseudo + "\n" +
-            "- Énigmes résolues : " + moteur.getNbEnigmesResolues()
+                resultat + "\n\n" +
+                "Résumé :\n" +
+                "- Joueur : " + pseudo + "\n" +
+                "- Énigmes résolues : " + moteur.getNbEnigmesResolues()
         );
 
         panelChoix.removeAll();
