@@ -59,23 +59,23 @@
             "image": "fuite.png",
             "choices": ["La forêt", "La mer"],
             "routes": {
-                "false": "end_lose",
-                "true": "end_win"
+                "false": "p7_lose",
+                "true": "p7_win"
             }
         },
-        "end_win": {
+        "p7_win": {
             "type": "qcm",
             "prompt": "Bravo ! Tu as atteint ton navire avec le trésor. Tu es le roi des pirates !",
             "image":"roi.png",
-            "choices": [],
-            "routes": {}
+            "choices": ["Terminer"],
+            "routes": {"Terminer": "end_win"}
         },
-        "end_lose": {
+        "p7_lose": {
            "type": "qcm",
            "prompt": "Le chef t'a rattrapé... Tu finiras tes jours à éplucher des patates en fond de cale.",
             "image":"patate.png",
-           "choices": ["Recommencer"],
-           "routes": {"Recommencer": "p0"}
+           "choices": ["Terminer"],
+           "routes": {"Terminer": "end_lose"}
         }
     }
 }
