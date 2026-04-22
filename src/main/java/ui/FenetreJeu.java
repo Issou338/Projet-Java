@@ -150,7 +150,7 @@ public class FenetreJeu extends JFrame {
 
     private void afficherImage(Puzzle puzzle) {
         if (puzzle.getImage() != null && !puzzle.getImage().isEmpty()) {
-            String cheminImage = cheminScenario + File.separator + "images" + File.separator + puzzle.getImage();
+           String cheminImage = cheminScenario + File.separator + puzzle.getImage();
 
             File fichierImage = new File(cheminImage);
 
