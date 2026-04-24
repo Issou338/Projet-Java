@@ -1,13 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package MoteurDeJeu;
-
-/**
- *
- * @author cano28
- */
 
 import com.mycompany.projet_jeu.model.Gamedata;
 import org.junit.jupiter.api.Test;
@@ -18,8 +9,31 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de test d’intégration du moteur de jeu.
+ * <p>
+ * Ce test vérifie le fonctionnement complet de l’application :
+ * - chargement d’un scénario externe valide,
+ * - progression dans les énigmes,
+ * - validation des réponses,
+ * - détection de la fin de partie et de la victoire.
+ * </p>
+ *
+ * <p>
+ * Contrairement aux tests unitaires, ce test couvre plusieurs composants
+ * simultanément : le chargeur de scénario et le moteur de jeu.
+ * </p>
+ *
+ * @author cano28
+ */
 public class IntegrationScenarioTest {
 
+    /**
+     * Vérifie qu’un scénario complet peut être chargé et joué
+     * jusqu’à une victoire en suivant les bonnes réponses.
+     *
+     * @throws Exception si une erreur survient lors du chargement ou de l’exécution du scénario
+     */
     @Test
     void doitChargerEtJouerUnScenarioComplet() throws Exception {
 
@@ -48,6 +62,19 @@ public class IntegrationScenarioTest {
         assertEquals(2, moteur.getNbEnigmesResolues());
     }
 
+    /**
+     * Crée dynamiquement un scénario complet utilisé pour le test d’intégration.
+     * <p>
+     * Le scénario contient :
+     * - deux énigmes (une text et une boolean),
+     * - un dossier images obligatoire,
+     * - des fichiers images simulés,
+     * - un fichier manifest.json conforme au format attendu.
+     * </p>
+     *
+     * @return chemin du dossier temporaire contenant le scénario
+     * @throws IOException si une erreur survient lors de la création des fichiers
+     */
     private Path creerScenarioComplet() throws IOException {
 
         Path dossier = Files.createTempDirectory("scenario_integration");

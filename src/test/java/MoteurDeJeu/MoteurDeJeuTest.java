@@ -1,23 +1,35 @@
 package MoteurDeJeu;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-/**
- *
- * @author cano28
- */
-
 import com.google.gson.Gson;
 import com.mycompany.projet_jeu.model.Gamedata;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de tests unitaires du moteur de jeu {@link MoteurDeJeu}.
+ * <p>
+ * Ces tests vérifient le comportement du moteur indépendamment du chargement
+ * de scénario :
+ * - gestion de la victoire,
+ * - gestion de la défaite,
+ * - abandon de la partie,
+ * - gestion des routes invalides.
+ * </p>
+ *
+ * <p>
+ * Les scénarios sont créés directement en mémoire via du JSON afin de tester
+ * uniquement la logique métier du moteur.
+ * </p>
+ *
+ * @author cano28
+ */
 public class MoteurDeJeuTest {
 
+    /**
+     * Vérifie que le moteur termine correctement une partie en victoire
+     * lorsque l’utilisateur fournit la bonne réponse.
+     */
     @Test
     void doitTerminerEnVictoire() {
         String json = """
@@ -48,6 +60,10 @@ public class MoteurDeJeuTest {
         assertEquals(1, moteur.getNbEnigmesResolues());
     }
 
+    /**
+     * Vérifie que le moteur termine en défaite lorsque la réponse
+     * ne correspond à aucune route spécifique et utilise la route par défaut (*).
+     */
     @Test
     void doitTerminerEnDefaiteAvecRouteParDefaut() {
         String json = """
@@ -78,6 +94,9 @@ public class MoteurDeJeuTest {
         assertEquals(1, moteur.getNbEnigmesResolues());
     }
 
+    /**
+     * Vérifie que le moteur gère correctement l’abandon de la partie.
+     */
     @Test
     void doitAbandonnerLaPartie() {
         String json = """
@@ -107,6 +126,10 @@ public class MoteurDeJeuTest {
         assertTrue(moteur.estAbandonne());
     }
 
+    /**
+     * Vérifie qu’une exception est levée lorsque la réponse fournie
+     * ne correspond à aucune route définie et qu’aucune route par défaut (*) n’existe.
+     */
     @Test
     void doitLeverUneExceptionSiAucuneRouteValide() {
         String json = """

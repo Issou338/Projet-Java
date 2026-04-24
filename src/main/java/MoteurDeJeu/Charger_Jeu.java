@@ -9,26 +9,56 @@ import java.io.FileReader;
 import java.util.Map;
 
 /**
- * Classe permettant de charger et valider un scénario de jeu depuis un dossier.
+ * Classe responsable du chargement et de la validation d’un scénario de jeu.
+ *
+ * <p>
+ * Elle lit un fichier manifest.json, crée un objet Gamedata et vérifie que
+ * toutes les contraintes du scénario sont respectées :
+ * </p>
+ *
+ * <ul>
+ *     <li>présence du dossier et du fichier manifest.json</li>
+ *     <li>présence du dossier images</li>
+ *     <li>validité des champs obligatoires (id, title, author, start)</li>
+ *     <li>présence et cohérence des énigmes</li>
+ *     <li>validité des types d’énigmes</li>
+ *     <li>existence des images</li>
+ *     <li>cohérence des routes entre énigmes</li>
+ * </ul>
+ *
+ * <p>
+ * En cas d’erreur, une exception ChargementJeuException est levée avec un message explicite.
+ * </p>
  *
  * @author cano28
  */
 public class Charger_Jeu {
 
+    /**
+     * Charge un scénario de jeu à partir d’un dossier et vérifie sa validité.
+     *
+     * @param dossierScenario chemin vers le dossier contenant le scénario
+     * @return objet Gamedata représentant le scénario chargé
+     * @throws ChargementJeuException si une erreur est détectée dans la structure ou les données
+     */
     public static Gamedata chargerJeu(String dossierScenario) throws ChargementJeuException {
+
         try {
             File dossier = new File(dossierScenario);
             File manifest = new File(dossier, "manifest.json");
             File dossierImages = new File(dossier, "images");
 
+            // Vérification du dossier scénario
             if (!dossier.exists() || !dossier.isDirectory()) {
                 throw new ChargementJeuException("Dossier scénario introuvable : " + dossierScenario);
             }
 
+            // Vérification du fichier manifest.json
             if (!manifest.exists()) {
                 throw new ChargementJeuException("Fichier manifest.json absent");
             }
 
+            // Vérification du dossier images
             if (!dossierImages.exists()) {
                 throw new ChargementJeuException("Dossier images/ introuvable");
             }
@@ -37,6 +67,7 @@ public class Charger_Jeu {
                 throw new ChargementJeuException("images/ existe mais n'est pas un dossier");
             }
 
+            // Lecture du JSON
             Gson gson = new Gson();
             Gamedata jeu;
 
@@ -44,6 +75,7 @@ public class Charger_Jeu {
                 jeu = gson.fromJson(reader, Gamedata.class);
             }
 
+            // Vérification du contenu du JSON
             if (jeu == null) {
                 throw new ChargementJeuException("manifest.json vide ou invalide");
             }
@@ -77,7 +109,9 @@ public class Charger_Jeu {
                 throw new ChargementJeuException("Énigme de départ inexistante : " + jeu.getStart());
             }
 
+            // Vérification des énigmes
             for (Map.Entry<String, Puzzle> entry : jeu.getPuzzles().entrySet()) {
+
                 String idPuzzle = entry.getKey();
                 Puzzle puzzle = entry.getValue();
 
@@ -97,6 +131,7 @@ public class Charger_Jeu {
                     throw new ChargementJeuException("Image manquante pour l’énigme : " + idPuzzle);
                 }
 
+                // Vérification de l’image
                 File image = new File(dossier, puzzle.getImage());
 
                 if (!image.exists()) {
@@ -109,21 +144,25 @@ public class Charger_Jeu {
 
                 String type = puzzle.getType();
 
+                // Vérification du type d’énigme
                 if (!"qcm".equals(type) && !"text".equals(type) && !"boolean".equals(type)) {
                     throw new ChargementJeuException("Type d’énigme non supporté : " + type);
                 }
 
+                // Vérification spécifique au QCM
                 if ("qcm".equals(type)) {
                     if (puzzle.getChoices() == null || puzzle.getChoices().isEmpty()) {
                         throw new ChargementJeuException("Choices manquant ou vide pour le QCM : " + idPuzzle);
                     }
                 }
 
+                // Vérification des routes
                 if (puzzle.getRoutes() == null || puzzle.getRoutes().isEmpty()) {
                     throw new ChargementJeuException("Aucune route définie pour l’énigme : " + idPuzzle);
                 }
 
                 for (Map.Entry<String, String> route : puzzle.getRoutes().entrySet()) {
+
                     String reponse = route.getKey();
                     String destination = route.getValue();
 
@@ -139,6 +178,7 @@ public class Charger_Jeu {
                         );
                     }
 
+                    // Vérification cohérence QCM
                     if ("qcm".equals(type)
                             && !"*".equals(reponse)
                             && !puzzle.getChoices().contains(reponse)) {
@@ -147,6 +187,7 @@ public class Charger_Jeu {
                         );
                     }
 
+                    // Vérification cohérence boolean
                     if ("boolean".equals(type)
                             && !"true".equals(reponse)
                             && !"false".equals(reponse)

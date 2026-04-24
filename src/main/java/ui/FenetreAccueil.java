@@ -14,6 +14,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+/**
+ * Fenêtre principale de l'application Escape Game.
+ * <p>
+ * Cette classe gère l'écran d'accueil, la saisie du pseudo,
+ * l'importation d'un scénario, le lancement d'une partie,
+ * l'affichage des énigmes et l'écran de fin.
+ * </p>
+ *
+ * @author cano28
+ */
 public class FenetreAccueil extends JFrame {
 
     // Partie accueil
@@ -36,6 +46,9 @@ public class FenetreAccueil extends JFrame {
     private JPanel panelAccueil;
     private JPanel panelJeu;
 
+    /**
+     * Construit la fenêtre principale et initialise les interfaces accueil et jeu.
+     */
     public FenetreAccueil() {
         setTitle("Escape Game");
         setSize(850, 700);
@@ -58,24 +71,30 @@ public class FenetreAccueil extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Crée l'interface de l'écran d'accueil.
+     */
     private void creerInterfaceAccueil() {
         panelAccueil = new JPanel(new BorderLayout());
 
         JPanel panelHaut = new JPanel();
         panelHaut.setLayout(new GridLayout(3, 1));
 
+        // Zone de saisie du pseudo.
         JPanel panelPseudo = new JPanel();
         JLabel labelPseudo = new JLabel("Pseudo :");
         champPseudo = new JTextField(15);
         panelPseudo.add(labelPseudo);
         panelPseudo.add(champPseudo);
 
+        // Boutons de validation et d'importation.
         JPanel panelBouton = new JPanel();
         JButton boutonValider = new JButton("Valider");
         JButton boutonImporterZip = new JButton("Importer un scénario .zip");
         panelBouton.add(boutonValider);
         panelBouton.add(boutonImporterZip);
 
+        // Message d'information affiché à l'utilisateur.
         JPanel panelInfo = new JPanel();
         labelMessage = new JLabel("Entrez votre pseudo.");
         panelInfo.add(labelMessage);
@@ -86,6 +105,7 @@ public class FenetreAccueil extends JFrame {
 
         panelAccueil.add(panelHaut, BorderLayout.NORTH);
 
+        // Zone contenant les scénarios disponibles.
         panelScenarios = new JPanel();
         panelScenarios.setLayout(new BoxLayout(panelScenarios, BoxLayout.Y_AXIS));
 
@@ -96,9 +116,13 @@ public class FenetreAccueil extends JFrame {
         boutonImporterZip.addActionListener(e -> importerScenarioZip());
     }
 
+    /**
+     * Crée l'interface utilisée pendant une partie.
+     */
     private void creerInterfaceJeu() {
         panelJeu = new JPanel(new BorderLayout());
 
+        // Zone d'affichage de la consigne.
         zoneTexte = new JTextArea();
         zoneTexte.setEditable(false);
         zoneTexte.setLineWrap(true);
@@ -108,18 +132,26 @@ public class FenetreAccueil extends JFrame {
 
         JScrollPane scrollTexte = new JScrollPane(zoneTexte);
 
+        // Zone d'affichage de l'image.
         labelImage = new JLabel("", SwingConstants.CENTER);
 
         JPanel panelCentre = new JPanel(new BorderLayout());
         panelCentre.add(scrollTexte, BorderLayout.NORTH);
         panelCentre.add(labelImage, BorderLayout.CENTER);
 
+        // Zone des choix/réponses.
         panelChoix = new JPanel(new FlowLayout());
 
         panelJeu.add(panelCentre, BorderLayout.CENTER);
         panelJeu.add(panelChoix, BorderLayout.SOUTH);
     }
 
+    /**
+     * Valide le pseudo saisi par l'utilisateur.
+     * <p>
+     * Si le pseudo est valide, les scénarios disponibles sont affichés.
+     * </p>
+     */
     private void validerPseudo() {
         pseudo = champPseudo.getText().trim();
 
@@ -132,6 +164,9 @@ public class FenetreAccueil extends JFrame {
         afficherScenarios();
     }
 
+    /**
+     * Affiche les scénarios présents dans le dossier local {@code scenarios}.
+     */
     private void afficherScenarios() {
         panelScenarios.removeAll();
 
@@ -166,6 +201,9 @@ public class FenetreAccueil extends JFrame {
         panelScenarios.repaint();
     }
 
+    /**
+     * Importe un scénario au format ZIP dans le dossier local {@code scenarios}.
+     */
     private void importerScenarioZip() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Sélectionner un scénario .zip");
@@ -204,13 +242,20 @@ public class FenetreAccueil extends JFrame {
             }
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(
+                    this,
                     "Erreur lors de l'import du scénario : " + e.getMessage(),
                     "Erreur",
-                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
+    /**
+     * Lance un scénario sélectionné.
+     *
+     * @param cheminScenarioSelectionne chemin du dossier ou du fichier ZIP du scénario
+     */
     private void lancerScenario(String cheminScenarioSelectionne) {
         try {
             String dossierScenarioACharger = cheminScenarioSelectionne;
@@ -233,6 +278,9 @@ public class FenetreAccueil extends JFrame {
         }
     }
 
+    /**
+     * Met à jour l'affichage du jeu selon l'énigme actuelle.
+     */
     private void mettreAJourAffichageJeu() {
         panelChoix.removeAll();
 
@@ -251,6 +299,7 @@ public class FenetreAccueil extends JFrame {
         zoneTexte.setText(puzzle.getPrompt());
         afficherImage(puzzle);
 
+        // Affichage adapté au type d'énigme.
         if ("text".equals(puzzle.getType())) {
             JTextField champReponse = new JTextField(15);
             panelChoix.add(champReponse);
@@ -280,6 +329,7 @@ public class FenetreAccueil extends JFrame {
             }
         }
 
+        // Boutons communs à toutes les énigmes.
         JButton boutonAbandonner = new JButton("Abandonner");
         boutonAbandonner.addActionListener(e -> abandonnerPartie());
         panelChoix.add(boutonAbandonner);
@@ -292,6 +342,11 @@ public class FenetreAccueil extends JFrame {
         panelChoix.repaint();
     }
 
+    /**
+     * Affiche l'image associée à une énigme.
+     *
+     * @param puzzle énigme dont l'image doit être affichée
+     */
     private void afficherImage(Puzzle puzzle) {
         if (puzzle.getImage() != null && !puzzle.getImage().isEmpty()) {
             String cheminImage = cheminScenario + File.separator + puzzle.getImage();
@@ -312,6 +367,11 @@ public class FenetreAccueil extends JFrame {
         }
     }
 
+    /**
+     * Envoie la réponse de l'utilisateur au moteur de jeu.
+     *
+     * @param reponse réponse saisie ou sélectionnée par l'utilisateur
+     */
     private void envoyerReponse(String reponse) {
         try {
             moteur.passerAuPuzzleSuivant(reponse.trim());
@@ -321,6 +381,9 @@ public class FenetreAccueil extends JFrame {
         }
     }
 
+    /**
+     * Affiche l'écran de fin de partie avec le résultat et le résumé.
+     */
     private void afficherEcranFin() {
         labelImage.setIcon(null);
         labelImage.setText("");
@@ -361,6 +424,9 @@ public class FenetreAccueil extends JFrame {
         panelChoix.repaint();
     }
 
+    /**
+     * Demande confirmation puis abandonne la partie si l'utilisateur accepte.
+     */
     private void abandonnerPartie() {
         int choix = JOptionPane.showConfirmDialog(
                 this,
@@ -375,6 +441,9 @@ public class FenetreAccueil extends JFrame {
         }
     }
 
+    /**
+     * Réinitialise l'affichage du jeu et retourne à l'écran d'accueil.
+     */
     private void retourAccueil() {
         moteur = null;
         cheminScenario = null;
