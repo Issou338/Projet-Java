@@ -173,4 +173,66 @@ public class Charger_JeuTest {
         Files.writeString(dossier.resolve("manifest.json"), json);
         return dossier;
     }
+    @Test
+void doitRefuserDossierImagesAbsent() throws IOException {
+    Path dossier = Files.createTempDirectory("scenario_test");
+
+    String json = """
+    {
+      "schemaVersion":"1.0",
+      "id":"test",
+      "title":"Scenario sans images",
+      "author":"Moi",
+      "start":"p1",
+      "puzzles":{
+        "p1":{
+          "type":"text",
+          "prompt":"Code ?",
+          "image":"images/img.png",
+          "routes":{"123":"end_win","*":"end_lose"}
+        }
+      }
+    }
+    """;
+
+    Files.writeString(dossier.resolve("manifest.json"), json);
+
+    ChargementJeuException exception = assertThrows(
+            ChargementJeuException.class,
+            () -> Charger_Jeu.chargerJeu(dossier.toString())
+    );
+
+    assertTrue(exception.getMessage().contains("Dossier images"));
+}
+@Test
+void doitRefuserImageManquanteDansPuzzle() throws IOException {
+    Path dossier = Files.createTempDirectory("scenario_test");
+    Files.createDirectory(dossier.resolve("images"));
+
+    String json = """
+    {
+      "schemaVersion":"1.0",
+      "id":"test",
+      "title":"Scenario image manquante",
+      "author":"Moi",
+      "start":"p1",
+      "puzzles":{
+        "p1":{
+          "type":"text",
+          "prompt":"Code ?",
+          "routes":{"123":"end_win","*":"end_lose"}
+        }
+      }
+    }
+    """;
+
+    Files.writeString(dossier.resolve("manifest.json"), json);
+
+    ChargementJeuException exception = assertThrows(
+            ChargementJeuException.class,
+            () -> Charger_Jeu.chargerJeu(dossier.toString())
+    );
+
+    assertTrue(exception.getMessage().contains("Image manquante"));
+}
 }
