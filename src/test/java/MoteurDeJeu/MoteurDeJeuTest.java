@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * uniquement la logique métier du moteur.
  * </p>
  *
+ * @author Emma
  * @author cano28
  */
 public class MoteurDeJeuTest {

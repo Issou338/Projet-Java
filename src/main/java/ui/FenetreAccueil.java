@@ -23,6 +23,9 @@ import java.nio.file.StandardCopyOption;
  * </p>
  *
  * @author cano28
+ * @author Emma
+ * @author mael
+ * @author amy
  */
 public class FenetreAccueil extends JFrame {
 

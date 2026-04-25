@@ -18,7 +18,7 @@ import java.util.Map;
  * (clé = identifiant de l'énigme, valeur = objet {@link Puzzle}).
  * </p>
  *
- * @author cano28
+ * @author mael
  */
 public class Gamedata {
 

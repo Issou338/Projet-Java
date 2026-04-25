@@ -19,7 +19,7 @@ import java.util.Map;
  * de la réponse donnée par l'utilisateur.
  * </p>
  *
- * @author cano28
+ * @author mael
  */
 public class Puzzle {
 

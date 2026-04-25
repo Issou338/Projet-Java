@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * </p>
  *
  * @author cano28
+ * @author mael
  */
 public class IntegrationScenarioTest {
 

@@ -35,6 +35,8 @@ import java.util.Map;
  * En cas d’erreur, une exception ChargementJeuException est levée avec un message explicite.
  * </p>
  *
+ * @author Emma
+ * @author Amy
  * @author cano28
  */
 public class Charger_Jeu {

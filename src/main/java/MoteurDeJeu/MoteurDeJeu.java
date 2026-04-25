@@ -20,6 +20,8 @@ import com.mycompany.projet_jeu.model.Puzzle;
  * </p>
  *
  * @author cano28
+ * @author Emma
+ * @author mael
  */
 public class MoteurDeJeu {
 
