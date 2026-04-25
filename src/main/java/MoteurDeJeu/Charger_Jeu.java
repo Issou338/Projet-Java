@@ -27,6 +27,11 @@ import java.util.Map;
  * </ul>
  *
  * <p>
+ * Le champ prompt n’est pas obligatoire : la consigne peut être contenue
+ * directement dans l’image de l’énigme.
+ * </p>
+ *
+ * <p>
  * En cas d’erreur, une exception ChargementJeuException est levée avec un message explicite.
  * </p>
  *
@@ -123,9 +128,10 @@ public class Charger_Jeu {
                     throw new ChargementJeuException("Type manquant pour l’énigme : " + idPuzzle);
                 }
 
-                if (puzzle.getPrompt() == null || puzzle.getPrompt().isBlank()) {
-                    throw new ChargementJeuException("Consigne manquante pour l’énigme : " + idPuzzle);
-                }
+                /*
+                 * Le prompt n'est pas obligatoire :
+                 * la consigne peut être directement présente dans l'image.
+                 */
 
                 if (puzzle.getImage() == null || puzzle.getImage().isBlank()) {
                     throw new ChargementJeuException("Image manquante pour l’énigme : " + idPuzzle);
@@ -178,7 +184,6 @@ public class Charger_Jeu {
                         );
                     }
 
-                    // Vérification cohérence QCM
                     if ("qcm".equals(type)
                             && !"*".equals(reponse)
                             && !puzzle.getChoices().contains(reponse)) {
@@ -187,7 +192,6 @@ public class Charger_Jeu {
                         );
                     }
 
-                    // Vérification cohérence boolean
                     if ("boolean".equals(type)
                             && !"true".equals(reponse)
                             && !"false".equals(reponse)

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * dans une énigme.
  * </p>
  *
- * @author cano28
+ * @author cano28 
  */
 public class Charger_JeuTest {
 
